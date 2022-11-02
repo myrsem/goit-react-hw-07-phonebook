@@ -13,7 +13,6 @@ const App = () => {
       <ContactForm />
       <h2>Contacts</h2>
       {contacts?.length > 0 && <Filter />}
-      {isLoading && <p>Loading...</p>}
       {contacts?.length === 0 && !isLoading && (
         <p
           style={{

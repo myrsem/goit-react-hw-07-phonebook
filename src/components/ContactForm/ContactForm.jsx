@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import {Loader} from 'components/Loader/Loader';
 import { useGetContactsQuery, useAddContactMutation } from 'redux/contactAPI';
 import { Form, Label, Text, Input, AddContactBtn } from './ContactForm.styled';
 
 const ContactForm = () => {
   const { data: contacts } = useGetContactsQuery();
-  const [addContact] = useAddContactMutation();
+  const [addContact, {isLoading}] = useAddContactMutation();
   const [formInput, setFormInput] = useState({ name: '', phone: '' });
   const { name, phone } = formInput;
 
@@ -13,7 +14,7 @@ const ContactForm = () => {
     setFormInput(state => ({ ...state, [name]: value }));
   };
 
-  const handleSubmitForm = async e => {
+  const handleSubmitForm = e => {
     e.preventDefault();
     const contactItem = {
       name,
@@ -22,8 +23,7 @@ const ContactForm = () => {
     console.log(contactItem);
     contacts.some(contact => contact.name.toLowerCase() === name.toLowerCase())
       ? alert(`${name} is already in contacts`)
-      : await addContact(contactItem);
-    setFormInput({ name: '', phone: '' });
+      : addContact(contactItem) && setFormInput({ name: '', phone: '' });
   };
 
   return (
@@ -55,7 +55,7 @@ const ContactForm = () => {
           value={phone}
         />
       </Label>
-      <AddContactBtn type="submit">Add contact</AddContactBtn>
+      <AddContactBtn type="submit" disabled={isLoading}>{isLoading? <Loader size={14} /> : 'Add contact'}</AddContactBtn>
     </Form>
   );
 };
